@@ -1,0 +1,7 @@
+/* WebDAV connection panel and the private wallpaper file list. */
+.file-input{display:none}
+.file-list{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.file-row{width:100%;text-align:left;justify-content:flex-start;gap:12px;padding:12px}
+.file-row>span{flex:1;min-width:0;overflow-wrap:anywhere;font-size:var(--text-xs)}
+.file-row small{display:block;color:#8fabbf;font-size:var(--text-2xs)}
+.file-row.selected{border-color:#a4ccdf}

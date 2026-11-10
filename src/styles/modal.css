@@ -1,0 +1,8 @@
+/* Dialog shell shared by settings and auth. */
+.modal,.panel{background:#20333fec;border:1px solid #adc6d42e;box-shadow:0 25px 100px #07121e77;backdrop-filter:blur(35px)}
+.modal{width:420px;max-height:calc(100svh - 40px);overflow:auto;border-radius:23px;padding:30px}
+.dialog-header{display:flex;justify-content:space-between;align-items:center;gap:18px}
+.dialog-header h2{font-size:var(--text-xl);font-weight:500;margin-top:6px;letter-spacing:.015em}
+.panel .dialog-header{padding:30px 28px 23px}
+.scrim{position:fixed;inset:0;z-index:10;background:#0915218c;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fade-in .18s ease}
+.panel{height:100svh;width:460px;max-width:100%;display:flex;flex-direction:column;border-radius:24px 0 0 24px;animation:slide-in .22s ease}

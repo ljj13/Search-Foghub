@@ -1,0 +1,11 @@
+/* Search form and its inline engine trigger. */
+.search-form{position:relative;z-index:2;display:flex;align-items:center;width:100%;height:65px;margin-top:41px;padding:0 15px 0 19px;border-radius:var(--radius-xl);background:#e9f4ff24;border:1px solid #eef8ff40;box-shadow:0 12px 40px #10243418;backdrop-filter:blur(24px)}
+.engine-wrap{flex-shrink:0}
+.search-divider{width:1px;height:22px;background:#e6f2ff38;margin:0 20px 0 9px}
+.search-symbol{opacity:.75;margin-right:13px}
+.search-form input{background:transparent;border:0;padding:12px 0;font-size:var(--text-lg);flex:1;color:#fff;outline:0}
+.search-form input:focus-visible{outline:0}
+.search-form:focus-within{border-color:#e1f1ffa3;box-shadow:0 0 0 3px #b7d8f51a}
+.search-form input::placeholder{color:#ecf3f1b8}
+.search-form input::-webkit-search-cancel-button{cursor:pointer}
+.search-submit{border:0;background:transparent;padding:10px;min-width:42px;opacity:.9;border-radius:var(--radius-sm);margin-left:8px}

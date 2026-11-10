@@ -1,0 +1,5 @@
+/* Greeting, time and date block. */
+.clock{text-align:center;text-shadow:0 2px 24px #0e263952}
+.greeting{font-size:var(--text-sm);letter-spacing:.12em;color:#e4edf1cc;margin-bottom:8px}
+.clock time{display:block;font-family:"Segoe UI",sans-serif;font-size:clamp(78px,8.6vw,124px);line-height:1.25;letter-spacing:-.045em;font-weight:200;font-variant-numeric:tabular-nums}
+.date{font-size:var(--text-md);letter-spacing:.13em;margin-top:12px;color:#eef4f5e8}

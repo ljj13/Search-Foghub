@@ -1,22 +1,64 @@
 import { useState } from 'react';
-import { Palette,Link,Cloud,UserRound,Check,LogOut } from 'lucide-react';
+import { Palette,Link,Cloud,UserRound,Check,LogOut,RefreshCw } from 'lucide-react';
 import { Modal } from './Modal';
 import { EnginePicker } from './EnginePicker';
 import { ShortcutSettings } from './ShortcutSettings';
 import { WebdavPanel } from './WebdavPanel';
 import { wallpapers } from './shared/preferences';
 import type { usePreferences } from './usePreferences';
+const tabs=[{id:'appearance',title:'外观',icon:Palette},{id:'shortcuts',title:'捷径',icon:Link},{id:'webdav',title:'网盘',icon:Cloud},{id:'account',title:'账号',icon:UserRound}] as const;
 export function Settings({model,onClose,onAuth,onChangePassword,initialShortcut,initialFolder}:{model:ReturnType<typeof usePreferences>;onClose:()=>void;onAuth:()=>void;onChangePassword:()=>void;initialShortcut?:string;initialFolder?:string|null}) {
   const [tab,setTab]=useState(initialShortcut?'shortcuts':'appearance');
   const [logoutFailed,setLogoutFailed]=useState(false);
   const {data,edit,user}=model;
-  const tabs=[{id:'appearance',title:'外观',icon:Palette},{id:'shortcuts',title:'捷径',icon:Link},{id:'webdav',title:'网盘',icon:Cloud},{id:'account',title:'账号',icon:UserRound}];
-  return <Modal title="设置" panel onClose={onClose}><nav className="tabs" aria-label="设置分类">{tabs.map(t=><button key={t.id} className={tab===t.id?'active':''} onClick={()=>setTab(t.id)} aria-pressed={tab===t.id}><t.icon size={17}/>{t.title}</button>)}</nav><div className="panel-content">
-    <div className="sync-line"><span className={`status-dot ${model.conflict?'warning':''}`}/>{model.status}{!user&&<button className="text-button" onClick={onAuth}>登录以同步</button>}</div>
-    {model.message&&<div className={model.conflict?'warning-box':'info-box'} role="status"><p>{model.message}</p>{model.conflict?<><button onClick={()=>void model.reload()}>加载云端（放弃本地编辑）</button><button className="text-button" onClick={()=>void navigator.clipboard.writeText(JSON.stringify(model.data,null,2))}>复制本地设置</button></>:model.blocked?<button onClick={model.retry}>重试保存</button>:model.status==='连接失败'?<button onClick={()=>void model.reload()}>重新加载云端设置</button>:null}</div>}
-    {tab==='appearance'&&<><div className="section-heading"><h3>为今天选一片风景</h3><span className="subtle">精选壁纸</span></div><div className="wallpaper-grid">{wallpapers.map(w=><button key={w.id} className={`wallpaper-card ${data.wallpaper.kind==='builtin'&&data.wallpaper.id===w.id?'selected':''}`} onClick={()=>edit(d=>({...d,wallpaper:{kind:'builtin',id:w.id}}))}><img src={`/wallpapers/${w.id}.jpg`} alt=""/><span>{w.name}</span>{data.wallpaper.kind==='builtin'&&data.wallpaper.id===w.id&&<Check className="wallpaper-check" size={16}/>}</button>)}</div><p className="hint">摄影作品来自 Unsplash，已获使用许可。<a href="https://unsplash.com/license" target="_blank" rel="noreferrer">许可说明 ↗</a></p><label className="range-label">壁纸暗度<span>{Math.round(data.dim*100)}%</span><input type="range" min="15" max="70" value={Math.round(data.dim*100)} onChange={e=>edit(d=>({...d,dim:Number(e.target.value)/100}))}/></label><div className="section-heading divided"><h3>搜索偏好</h3></div><div className="engine-setting"><span>默认搜索引擎</span><EnginePicker label="默认搜索引擎" value={data.engine} onChange={engine=>edit(d=>({...d,engine}))}/></div><label className="checkbox"><input type="checkbox" checked={data.newTab} onChange={e=>edit(d=>({...d,newTab:e.target.checked}))}/><span>在新标签页打开搜索结果</span></label><p className="hint">时钟跟随设备当地时区，无需单独设置。</p></>}
-    <div hidden={tab!=='shortcuts'}><ShortcutSettings model={model} initialShortcut={initialShortcut} initialFolder={initialFolder}/></div>
-    {tab==='webdav'&&(user?<WebdavPanel selected={data.wallpaper.kind==='webdav'?data.wallpaper.file:undefined} onSelect={file=>edit(d=>({...d,wallpaper:{kind:'webdav',file}}))} onExpired={()=>void model.reload()}/>:<div className="empty"><Cloud size={32}/><h3>连接你的壁纸网盘</h3><p>登录后配置 WebDAV，选用自己的风景。</p><button className="primary" onClick={onAuth}>登录账号</button></div>)}
-    {tab==='account'&&<><div className="section-heading"><h3>{user?'你的私人空间':'欢迎来到 BeyondFog'}</h3></div>{user?<><div className="account-card"><UserRound size={24}/><div><strong>BeyondFog</strong><span>{user.email}</span></div></div><p className="description">捷径、搜索偏好、壁纸选择和网盘连接会在设备间同步。</p><button className="wide" disabled={model.loggingOut} onClick={onChangePassword}>修改密码</button><button className="wide danger logout" disabled={model.loggingOut} onClick={()=>void model.logout().then(onClose).catch(()=>setLogoutFailed(true))}><LogOut size={16}/>{model.loggingOut?'正在退出…':'退出登录'}</button>{logoutFailed&&<button className="wide danger" disabled={model.loggingOut} onClick={()=>void model.logout(true).then(onClose).catch(()=>{})}>放弃本地编辑并退出</button>}<p className="hint">退出前保存更改；退出后恢复默认首页并清除私人内容。</p></>:<><p className="description">搜索、查看时钟和默认捷径无需登录。登录后，在每一台设备上找回熟悉的首页。</p><button className="primary wide" onClick={onAuth}>登录账号</button><p className="hint">仅供个人使用，公开注册已关闭。</p></>}<div className="about"><span className="eyebrow">A LITTLE SPACE FOR DISCOVERY</span><p>BeyondFog <small>1.0</small></p><span>穿过薄雾，发现更多。</span></div></>}
-  </div><footer className="panel-footer">{user?'你的更改会自动保存':'访客模式 · 登录后开启跨设备同步'}</footer></Modal>;
+  const wallpapered=Boolean(data.wallpaper.kind==='builtin');
+  return <Modal title="设置" panel onClose={onClose}>
+    <nav className="tabs" aria-label="设置分类">{tabs.map(t=><button key={t.id} type="button" className={tab===t.id?'active':''} onClick={()=>setTab(t.id)} aria-pressed={tab===t.id}><t.icon size={17}/>{t.title}</button>)}</nav>
+    <div className="panel-content">
+      <div className="sync-line">
+        <span className={`status-dot ${model.conflict?'warning':''}`} aria-hidden="true"/>
+        <span className="sync-status" aria-live="polite">{model.status}</span>
+        {!user&&<button className="text-button" type="button" onClick={onAuth}>登录以同步</button>}
+      </div>
+      {model.message&&<div className={model.conflict?'warning-box':'info-box'} role={model.conflict||model.blocked?'alert':'status'}>
+        <p>{model.message}</p>
+        {model.conflict
+          ? <><button type="button" onClick={()=>void model.reload()}>加载云端（放弃本地编辑）</button><button type="button" className="text-button" onClick={()=>void navigator.clipboard.writeText(JSON.stringify(model.data,null,2))}>复制本地设置</button></>
+          : model.blocked
+          ? <button type="button" onClick={()=>void model.retry()}><RefreshCw size={14}/>重试保存</button>
+          : model.status==='连接失败'
+          ? <button type="button" onClick={()=>void model.reload()}><RefreshCw size={14}/>重新加载云端设置</button>
+          : null}
+      </div>}
+      {tab==='appearance'&&<>
+        <div className="section-heading"><h3>为今天选一片风景</h3><span className="subtle">精选壁纸</span></div>
+        <div className="wallpaper-grid">{wallpapers.map(w=><button type="button" key={w.id} className={`wallpaper-card ${wallpapered&&data.wallpaper.kind==='builtin'&&data.wallpaper.id===w.id?'selected':''}`} aria-pressed={data.wallpaper.kind==='builtin'&&data.wallpaper.id===w.id} onClick={()=>edit(d=>({...d,wallpaper:{kind:'builtin',id:w.id}}))}><img src={`/wallpapers/${w.id}.webp`} alt="" loading="lazy" decoding="async"/><span>{w.name}</span>{data.wallpaper.kind==='builtin'&&data.wallpaper.id===w.id&&<Check className="wallpaper-check" size={16} aria-hidden="true"/>}</button>)}</div>
+        <p className="hint">摄影作品来自 Unsplash，已获使用许可。<a href="https://unsplash.com/license" target="_blank" rel="noreferrer">许可说明 ↗</a></p>
+        <label className="range-label">壁纸暗度<span>{Math.round(data.dim*100)}%</span><input type="range" min="15" max="70" value={Math.round(data.dim*100)} onChange={e=>edit(d=>({...d,dim:Number(e.target.value)/100}))}/></label>
+        <div className="section-heading divided"><h3>搜索偏好</h3></div>
+        <div className="engine-setting"><span>默认搜索引擎</span><EnginePicker label="默认搜索引擎" value={data.engine} onChange={engine=>edit(d=>({...d,engine}))}/></div>
+        <label className="checkbox"><input type="checkbox" checked={data.newTab} onChange={e=>edit(d=>({...d,newTab:e.target.checked}))}/><span>在新标签页打开搜索结果</span></label>
+        <p className="hint">时钟跟随设备当地时区，无需单独设置。</p>
+      </>}
+      <div hidden={tab!=='shortcuts'}><ShortcutSettings model={model} initialShortcut={initialShortcut} initialFolder={initialFolder}/></div>
+      {tab==='webdav'&&(user?<WebdavPanel selected={data.wallpaper.kind==='webdav'?data.wallpaper.file:undefined} onSelect={file=>edit(d=>({...d,wallpaper:{kind:'webdav',file}}))} onExpired={()=>void model.reload()}/>:<div className="empty"><Cloud size={32}/><h3>连接你的壁纸网盘</h3><p>登录后配置 WebDAV，选用自己的风景。</p><button type="button" className="primary" onClick={onAuth}>登录账号</button></div>)}
+      {tab==='account'&&<>
+        <div className="section-heading"><h3>{user?'你的私人空间':'欢迎来到 BeyondFog'}</h3></div>
+        {user?<>
+          <div className="account-card"><UserRound size={24}/><div><strong>BeyondFog</strong><span>{user.email}</span></div></div>
+          <p className="description">捷径、搜索偏好、壁纸选择和网盘连接会在设备间同步。</p>
+          <button type="button" className="wide" disabled={model.loggingOut} onClick={onChangePassword}>修改密码</button>
+          <button type="button" className="wide danger logout" disabled={model.loggingOut} onClick={()=>void model.logout().then(onClose).catch(()=>setLogoutFailed(true))}><LogOut size={16}/>{model.loggingOut?'正在退出…':'退出登录'}</button>
+          {logoutFailed&&<button type="button" className="wide danger" disabled={model.loggingOut} onClick={()=>void model.logout(true).then(onClose).catch(()=>{})}>放弃本地编辑并退出</button>}
+          <p className="hint">退出前保存更改；退出后恢复默认首页并清除私人内容。</p>
+        </>:<>
+          <p className="description">搜索、查看时钟和默认捷径无需登录。登录后，在每一台设备上找回熟悉的首页。</p>
+          <button type="button" className="primary wide" onClick={onAuth}>登录账号</button>
+          <p className="hint">仅供个人使用，公开注册已关闭。</p>
+        </>}
+        <div className="about"><span className="eyebrow">A LITTLE SPACE FOR DISCOVERY</span><p>BeyondFog <small>1.0</small></p><span>穿过薄雾，发现更多。</span></div>
+      </>}
+    </div>
+    <footer className="panel-footer">{user?'你的更改会自动保存':'访客模式 · 登录后开启跨设备同步'}</footer>
+  </Modal>;
 }

@@ -1,0 +1,9 @@
+/* Page shell: fixed backdrop, main column, footer credit. */
+.home{min-height:100svh;position:relative;isolation:isolate;display:flex;flex-direction:column}
+.backdrop,.backdrop-shade{position:fixed;inset:0;width:100%;height:100%;z-index:-2}
+.backdrop{object-fit:cover;object-position:50% 43%;filter:saturate(.7)}
+.backdrop-shade{z-index:-1;background:linear-gradient(180deg,rgba(8,24,37,.28),rgba(9,24,36,.15) 35%,rgba(8,23,33,.4));background-color:rgba(11,28,43,var(--dim));pointer-events:none}
+.home-content{width:min(700px,calc(100% - 48px));margin:auto;display:flex;align-items:center;flex-direction:column;padding:38px 0 112px}
+.home-footer{position:absolute;bottom:0;left:0;right:0;padding:25px 42px;display:flex;justify-content:space-between;align-items:center;gap:16px;color:#d4e2ebc4;font-size:var(--text-2xs)}
+.home-motto{letter-spacing:.19em}
+.photo-credit{display:flex;gap:12px}

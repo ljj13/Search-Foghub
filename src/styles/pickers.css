@@ -1,0 +1,20 @@
+/* Engine picker and the custom select popup. */
+.engine-picker{position:relative;width:100%;font-size:var(--text-base)}
+.engine-picker-search{width:89px}
+.engine-trigger{width:100%;min-height:44px;justify-content:space-between;gap:12px;padding:11px 13px;background:var(--surface-field);border:1px solid var(--border-field);border-radius:9px;color:#e8f1f8}
+.engine-picker-search .engine-trigger{border:0;background:transparent;padding:8px 4px;font-weight:500;gap:8px}
+.engine-trigger:hover{background:#b7d8f514}
+.engine-trigger svg{flex:none;transition:transform .16s ease}
+.engine-trigger svg.expanded{transform:rotate(180deg)}
+.engine-menu{position:absolute;top:calc(100% + 8px);z-index:5;overflow:auto;border-radius:var(--radius-lg);padding:6px;background:#20333ff5;border:1px solid #adc6d440;box-shadow:0 12px 35px #07121e66;backdrop-filter:blur(24px);scrollbar-width:thin;scrollbar-color:#637e8d transparent;animation:fade-in .15s ease}
+.engine-menu-above{top:auto;bottom:calc(100% + 8px)}
+.engine-option{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:10px 12px;border-radius:9px;color:#e8f1f8;cursor:pointer;user-select:none}
+.engine-option-active{background:#b7d8f527;outline:1px solid #b7d8f535;outline-offset:-1px}
+.engine-option[aria-selected=true]{color:#eaf5ff;font-weight:550}
+.engine-option svg{color:#b4d3e7;flex:none}
+.engine-setting{display:block;margin:18px 0;font-size:var(--text-sm);color:#c4d5e1}
+.engine-setting>.engine-picker{margin-top:7px}
+.select-value,.select-option-content{display:flex;align-items:center;gap:10px;min-width:0;flex:1;text-align:left}
+.select-value>span,.select-option-content>span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.select-value>small,.select-option-content>small{font-size:var(--text-2xs);color:#a9c2d2;margin-left:auto;white-space:nowrap}
+.engine-option{flex-shrink:0}

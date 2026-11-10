@@ -3,6 +3,9 @@ import { api,ApiError } from './api';
 import { defaults,preferencesSchema,type Preferences } from './shared/preferences';
 import { dropCache,readCache,writeCache,type User } from './snapshotCache';
 type Snapshot={version:number;data:Preferences;recovered?:boolean};
+function settle<T>(promise:Promise<T>):Promise<PromiseSettledResult<T>> {
+  return promise.then(value=>({status:'fulfilled',value} as const),reason=>({status:'rejected',reason} as const));
+}
 export function usePreferences() {
   // A cached snapshot turns a reload into an instant paint; without one the shortcut area stays a
   // skeleton until the first answer, so the default grid never flashes before the real folders.
@@ -29,9 +32,14 @@ export function usePreferences() {
     if(force)generation.current++;
     const gen=generation.current,requestId=++refresh.current,editSeq=seq.current;
     try {
-      // Both reads only need the stored cookie, so they share one round trip (and one cold Durable
-      // Object start) instead of running nose to tail.
-      const [sessionResult,snapResult]=await Promise.allSettled([api<{user:User}|null>('/api/auth/get-session'),api<Snapshot>('/api/preferences')]);
+      // A cached snapshot means the last visit was signed in, so the session and the snapshot can
+      // share one round trip (and one cold Durable Object start). Without a cache we ask the session
+      // first: a visitor must not fire a private request that can only answer 401.
+      const sessionRequest=settle(api<{user:User}|null>('/api/auth/get-session'));
+      let sessionResult:PromiseSettledResult<{user:User}|null>;
+      let snapResult:PromiseSettledResult<Snapshot>|null=null;
+      if(cached) [sessionResult,snapResult]=await Promise.all([sessionRequest,settle(api<Snapshot>('/api/preferences'))]);
+      else sessionResult=await sessionRequest;
       if(gen!==generation.current)return;
       const session=sessionResult.status==='fulfilled'?sessionResult.value:null;
       // Adopt the identity before any fence: a failed or superseded snapshot must never look like a logout.
@@ -43,6 +51,7 @@ export function usePreferences() {
         else {setStatus('访客模式');setReady(true);}
         return;
       }
+      if(!snapResult) {snapResult=await settle(api<Snapshot>('/api/preferences'));if(gen!==generation.current)return;}
       if(snapResult.status==='rejected')throw snapResult.reason;
       const snap=snapResult.value;
       if(snap.version<revision.current) {setReady(true);return;}

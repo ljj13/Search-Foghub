@@ -1,0 +1,41 @@
+/* Shortcut grid, tiles, skeleton and the manage entry. */
+.shortcut-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:23px;padding:10px 6px}
+.shortcut-grid.is-collapsed{overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 16px),transparent);mask-image:linear-gradient(180deg,#000 calc(100% - 16px),transparent)}
+.shortcut-expand{margin-top:16px;padding:6px 12px;border:1px solid rgba(211,229,240,.18);border-radius:var(--radius-pill);background:rgba(20,48,67,.22);font-size:var(--text-xs);color:#dfeaf1}
+.shortcut-expand:hover{background:rgba(173,201,220,.18);border-color:rgba(211,229,240,.32)}
+.shortcut-link:focus-visible,.add-shortcut:focus-visible,.shortcut-edit:focus-visible{outline:2px solid var(--fog-accent);outline-offset:5px;border-radius:var(--radius-md)}
+@media(hover:none){.shortcut-edit{opacity:1}}
+.shortcut-item{position:relative;flex:none;width:74px}
+.shortcut-link,.add-shortcut{display:flex;flex-direction:column;align-items:center;gap:11px;color:#f0f4f5ed;font-size:var(--text-sm);width:74px;line-height:1.4;text-shadow:0 2px 14px #102432a3}
+.shortcut-link>span:last-child,.add-shortcut>span:last-child{width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.shortcut-link:hover{text-decoration:none}
+.shortcut-icon{height:59px;width:59px;border:1px solid #e5f5ff35;background:#e0ecf323;backdrop-filter:blur(20px);border-radius:var(--radius-xl);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px #12263515;transition:transform .2s,background .2s}
+.shortcut-link:hover .shortcut-icon,.add-shortcut:hover .shortcut-icon{transform:translateY(-4px);background:#e1f0ff42}
+.shortcut-edit{position:absolute;top:-7px;right:0px;border-radius:50%;width:24px;height:24px;min-width:0;min-height:0;padding:4px;background:#243d50;border:1px solid #adcde377;opacity:0}
+.shortcut-item:hover .shortcut-edit,.shortcut-item:focus-within .shortcut-edit{opacity:1}
+.add-shortcut{background:none;border:0;padding:0;justify-content:flex-start}
+.add-shortcut .shortcut-icon{background:#e0ecf30f;border-style:dashed;color:#e6f1fbbb}
+.add-shortcut:hover{background:transparent;border-color:transparent}
+.manage-shortcuts{font-size:var(--text-xs);margin-top:23px;padding:4px 8px;border:0;background:transparent;color:#e3eef299;letter-spacing:.04em}
+.shortcut-form{background:#14293355;border:1px solid #7193a43b;border-radius:var(--radius-lg);padding:3px 15px 15px;margin:18px 0}
+.shortcut-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #abc7d615}
+.shortcut-info{min-width:0;flex:1}
+.shortcut-info strong{font-size:var(--text-sm);font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shortcut-info small{font-size:var(--text-2xs);color:var(--fog-ink-faint);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.folder-trigger .shortcut-icon{position:relative}
+.folder-popup-sites .shortcut-link{width:100%;font-size:var(--text-xs);gap:7px}
+.folder-popup-sites .shortcut-link>span:last-child{width:100%}
+.folder-popup-sites .shortcut-icon{width:49px;height:49px;border-radius:var(--radius-lg)}
+.shortcut-add-actions{display:flex;gap:8px;align-items:center}
+.shortcut-add-actions .small{padding:8px 10px;min-height:38px}
+.shortcut-skeleton{display:flex;flex-direction:column;align-items:center;gap:11px}
+.shortcut-skeleton .shortcut-icon,.shortcut-skeleton .skeleton-label{background:#e0ecf32b;border-color:#e5f5ff22;animation:skeleton-pulse 1.6s ease-in-out infinite}
+.shortcut-skeleton .skeleton-label{display:block;width:44px;height:9px;border-radius:5px}
+.folder-popup-sites .shortcut-link>span:last-child{width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:clip}
+.shortcuts{margin-top:36px;width:100%;text-align:center}
+.site-icon{position:relative;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;flex:none;font-size:21px;font-weight:500;line-height:1;text-shadow:none}
+.site-icon-image{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0}
+.site-icon-image.is-loaded{opacity:1}
+
+.shortcut-item.is-dragging{opacity:.45}
+.shortcut-item.is-drop-target .shortcut-icon{border-color:rgba(179,220,245,.8);box-shadow:0 0 0 3px rgba(139,199,232,.24);transform:translateY(-2px)}
