@@ -79,7 +79,7 @@ export function FolderShortcuts({ data, edit, enabled, onAdd }: {
       {open === g.key && <div ref={popup} id="folder-popup" role="region" aria-label={`${g.name}中的网站`} aria-hidden={closing || undefined} inert={closing} className={`folder-popup${closing ? ' is-closing' : ''}`} data-direction={position?.up ? 'up' : 'down'}
         style={{ left: position?.left ?? 0, top: position?.top ?? 0, width: position?.width ?? 360, maxHeight: position?.height ?? 320, visibility: position ? 'visible' : 'hidden', '--folder-shift': position?.up ? '-6px' : '6px' } as CSSProperties}>
         <header className="folder-popup-header"><strong>{g.name}</strong><span>{g.sites.length} 个网站</span></header>
-        <div className="folder-popup-scroll"><div className="folder-popup-sites">{g.sites.map(s => <a key={s.id} className="shortcut-link" href={s.url} target="_blank" rel="noreferrer"><span className="shortcut-icon"><ShortcutIcon url={s.url} title={s.title}/></span><span>{s.title}</span></a>)}</div>
+        <div className="folder-popup-scroll"><div className="folder-popup-sites">{g.sites.map(s => <a key={s.id} className="shortcut-link" href={s.url} title={s.title} target="_blank" rel="noreferrer"><span className="shortcut-icon"><ShortcutIcon url={s.url} title={s.title}/></span><span>{s.title}</span></a>)}</div>
           {!g.sites.length && <p className="folder-empty">暂无网站</p>}
           <button className="folder-add-site" disabled={data.shortcuts.length >= 100} onClick={() => { buttons.current.get(g.key)?.focus({ preventScroll: true }); close(true); onAdd(g.id); }}><Plus size={15}/>添加网站</button>
         </div>

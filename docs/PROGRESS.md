@@ -161,6 +161,14 @@ Verification: typecheck,71/71 unit tests (was65),47/47 browser tests (2.4m) on t
 
 Deployed 2026-11-10: `main` moved 07e26a5→3acaa6a ("fix: paint the saved layout on the first frame"), `npm run deploy` published version `05f718cd-88eb-4936-ba04-1ad9df253fc7` (assets `/assets/index-BJdcq09k.js`); the previous `5eb9056d-f305-4e90-8869-eb793ef520d6` remains the rollback target. Post-deploy checks: `node scripts/production-smoke.mjs` passed all four groups; the served bundle contains `beyondfog.snapshot.v2`, the skeleton label and the 正在连接 copy; a live tab renders 我的空间 with six folders and no notice, `localStorage['beyondfog.snapshot.v2']` holds version30 with19 shortcuts and6 folders, and the live trace shows both reads starting at2407ms instead of the snapshot waiting for the session.
 
+### Folder menus show complete site names
+
+Report: the folder menu clipped a long site name to `中国大学 MO…`, and every folder rendered as four columns whether it held one site or a dozen — a three-site folder left an empty fourth column while a one-site folder put a single 49px icon in a wide empty row.
+
+Fixes. `.folder-popup-sites` now uses `repeat(auto-fit, minmax(70px, 1fr))`, so the menu spends as many columns as it can (up to four) instead of always four: three sites get 103.5px each and `中国大学MOOC` fits on one line, four or more stay at 75.7px and keep their single row. `.folder-popup-sites:has(> :only-child)` pins a lone site to 104px so it no longer stretches across the menu. Names wrap to two lines (`-webkit-line-clamp:2`, `text-overflow:clip`, centred) before anything is cut, and every menu link carries `title` for the full name on hover. The header title grew to 14px/600, the “N 个网站” count became a pill, the scroll padding tightened to 14/16, and 添加网站 dropped to 40px with a softer dashed border.
+
+Verification: typecheck, 71/71 unit, 47/47 browser tests (2.4m). Measured in the browser: three sites → three 103.5px columns, four sites → four 75.7px columns, one site → a single 104px column, `Cloudflare Dashboard` wraps to two lines instead of clipping, and at 390×844 the 353px menu stays inside the viewport with no horizontal scroll.
+
 ### The site moved to search.foghub.org
 
 Report: the owner has `foghub.org` on the same Cloudflare account and asked for the current `beyondfog.cc.cd` site to be served from `search.foghub.org`.

@@ -15,3 +15,13 @@
 .shortcut-skeleton .shortcut-icon,.shortcut-skeleton .skeleton-label{background:#e0ecf32b;border-color:#e5f5ff22;animation:skeleton-pulse 1.6s ease-in-out infinite}
 .shortcut-skeleton .skeleton-label{display:block;width:44px;height:9px;border-radius:5px}
 @keyframes skeleton-pulse{0%,100%{opacity:.4}50%{opacity:1}}
+/* Folder popup: fewer columns for small folders, two-line names, lighter chrome. */
+.folder-popup-header{padding:12px 16px;gap:10px}
+.folder-popup-header strong{font-size:14px;font-weight:600}
+.folder-popup-header>span{font-size:10px;color:#c6dbe8;background:#9dc3da1a;border:1px solid #b7d5e62e;border-radius:999px;padding:1px 8px}
+.folder-popup-scroll{padding:14px 16px 15px}
+.folder-popup-sites{grid-template-columns:repeat(auto-fit,minmax(70px,1fr));justify-content:center;gap:16px 8px}
+.folder-popup-sites:has(> :only-child){grid-template-columns:104px}
+.folder-popup-sites .shortcut-link>span:last-child{width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:clip}
+.folder-add-site{margin-top:12px;min-height:40px;font-size:12px;border-color:#a9c8dc42;color:#d9e8f2}
+.folder-add-site:hover{border-color:#bcdcee7a;background:#9dc3da1a}
