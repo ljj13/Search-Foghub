@@ -1,0 +1,64 @@
+{
+  // Staging is a separate Worker with its own D1, its own Durable Object namespace (a DO
+  // namespace belongs to the script that declares the class) and its own secrets.
+  // Nothing here may point at a production resource: scripts/deploy-staging.mjs refuses to
+  // deploy if the D1 id, the custom domain or the Worker name collide with production.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "beyondfog-staging",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  // No workers.dev hostname and no preview URLs: the only entry point is the gated custom domain.
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "staging.search.foghub.org",
+      "custom_domain": true
+    }
+  ],
+  "assets": {
+    // The Vite plugin injects `directory` for `npm run deploy`; a direct `wrangler deploy`
+    // with this config has to name the build output itself.
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SERVICE",
+        "class_name": "BeyondFogService"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "BeyondFogService"
+      ]
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "beyondfog-staging-db",
+      "database_id": "fb23bb45-004f-4c2a-afe9-4cb65ceabbc5",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "APP_ORIGIN": "https://staging.search.foghub.org",
+    "OWNER_EMAIL": "staging@foghub.org",
+    "EMAIL_FROM": "noreply@beyondfog.cc.cd",
+    "WEBDAV_ALLOWED_HOSTS": "dav.jianguoyun.com",
+    "ENVIRONMENT": "staging"
+  },
+  // No send_email binding on purpose: password resets answer 503 instead of sending mail.
+  "observability": {
+    "enabled": false
+  }
+}

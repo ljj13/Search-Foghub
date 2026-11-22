@@ -219,14 +219,26 @@ Note. The first deploy of this change (`6706861b-c762-4ff8-89f7-4dd4f9ca47eb`) w
 
 Report: the owner asked for the Cloudflare RUM/CSP conflict to be fixed in production and for the modernized front end to be reviewed without shipping it.
 
-RUM/CSP. Cloudflare was injecting static.cloudflareinsights.com/beacon.min.js into the HTML of search.foghub.org only (the apex and dmin.proxy.foghub.org were never injected), and script-src 'self' blocked it. The fix is a single Configuration Rule on the oghub.org zone — http.host eq "search.foghub.org" with disable_rum — so the CSP stays exactly as it was and no Worker deploy was needed. Verified in the browser: no beacon request, no console violation, CSP header byte-identical, and scripts/production-smoke.mjs now asserts both the full CSP string and the absence of the beacon.
+RUM/CSP. Cloudflare was injecting static.cloudflareinsights.com/beacon.min.js into the HTML of search.foghub.org only (the apex and admin.proxy.foghub.org were never injected), and script-src 'self' blocked it. The fix is a single Configuration Rule on the foghub.org zone — http.host eq "search.foghub.org" with disable_rum — so the CSP stays exactly as it was and no Worker deploy was needed. Verified in the browser: no beacon request, no console violation, CSP header byte-identical, and scripts/production-smoke.mjs now asserts both the full CSP string and the absence of the beacon.
 
 Preview. wrangler preview (4.147.0) deploys the current Worker as a Preview but keeps the production D1, Durable Object and email bindings, and it has no binding overrides, so a cloud Preview would have written production data. The modernized branch was therefore reviewed on the local dev server with the local D1/DO and the seeded test account, and the cloud Preview is recorded as blocked rather than faked. Desktop 1440x900, tablet 768x1024 and mobile 390x844 all render with zero horizontal overflow and zero console errors; the folder menu becomes a bottom sheet on mobile; the settings panel, login dialog, reset form and all four tabs were exercised.
 
-Verification. 
-px tsc --noEmit clean, 
-px vitest run 78/78, 
-px playwright test 50/50, 
-pm run build passes (CSS 30.27 kB / gzip 7.53, JS 380.92 kB / gzip 117.27 versus main's 23.46 / 6.05 and 374.94 / 115.38). Production is untouched: version 358b11d, bundle index-BJdcq09k.js, old host still 302, D1 and DO bindings unchanged, no CI that could deploy on push.
+Verification. `npx tsc --noEmit` clean, `npx vitest run` 78/78, `npx playwright test` 50/50, `npm run build` passes (CSS 30.27 kB / gzip 7.53, JS 380.92 kB / gzip 117.27 versus main's 23.46 / 6.05 and 374.94 / 115.38). Production is untouched: version `f358b11d`, bundle index-BJdcq09k.js, old host still 302, D1 and DO bindings unchanged, no CI that could deploy on push.
 
 Details: docs/P13_RUM_CSP_FIX.md, docs/P13_UI_PREVIEW.md, docs/P13_FINAL_VALIDATION.md.
+
+## 2026-11-22 — P14: an isolated staging deployment for the modernized front end
+
+Report: the owner asked for a real Cloudflare staging environment — its own Worker, D1, Durable Object namespace, Better Auth configuration and test account — that serves `feat/ui-modernize` at `https://staging.search.foghub.org`, can be redeployed repeatedly, and never touches production data.
+
+Why a separate Worker. `wrangler preview` (4.147.0, open beta) deploys the current Worker as a Preview but keeps the production bindings — the same D1, the same Durable Object namespace, the same `EMAIL` binding — and it has no binding overrides, so a preview would have written production data. A second Worker with its own resources is the only configuration that satisfies the isolation requirement while still being a real Cloudflare deployment.
+
+Resources. Worker `beyondfog-staging` (version `0f5a49a1-5b4f-44ec-955d-74a650ad1e12`), D1 `beyondfog-staging-db` (`fb23bb45-004f-4c2a-afe9-4cb65ceabbc5`, created empty and migrated with `migrations/0001_initial.sql`), its own Durable Object namespace (a namespace belongs to the script that declares the class), freshly generated `BETTER_AUTH_SECRET` and `WEBDAV_ENCRYPTION_KEY`, owner account `staging@foghub.org`, `workers_dev: false`, and no `send_email` binding. `wrangler.staging.jsonc` holds the whole definition; `scripts/deploy-staging.mjs` refuses to deploy unless the Worker name, D1 id, route, `APP_ORIGIN` and `ENVIRONMENT` still point at staging.
+
+Access protection. `worker/index.ts` gained `stagingGate()`: when `STAGING_ACCESS` is set, every request must carry HTTP Basic credentials (length-checked, XOR-compared) or it gets `401` with `WWW-Authenticate`, `Cache-Control: no-store` and `X-Robots-Tag: noindex, nofollow`. `ENVIRONMENT=staging` adds `X-Robots-Tag: noindex` to every application response. Cloudflare was injecting its RUM beacon into the staging host too, so a second Configuration Rule (`http.host eq "staging.search.foghub.org"` + `disable_rum`) was added through the dashboard API; the production rule was left untouched.
+
+Verification. `scripts/staging-smoke.mjs` passes: gate `401`, authorized `200` with the production CSP byte-identical, no beacon, `noindex`, bundle free of both owner addresses, private APIs `401` + `no-store`, sign-up `403`, wrong password `401`, password reset `503` (mail not bound), production `Origin` `403`. A Playwright run against the real deployment (`docs/P14_UI_CLOUD_VALIDATION.md`) passed 62/62 checks across 1440×900, 768×1024 and 390×844 in guest and signed-in states: no horizontal overflow, no console errors, no failed requests, login dialog and settings panel inside the viewport, preference persisted across a reload, folder popup inside the viewport (bottom sheet on mobile), Escape closes, session cookie `HttpOnly`/`Secure`/`SameSite=Lax` and host-scoped, session token unreadable from JavaScript.
+
+Production untouched. Deployment still `f358b11d-da50-48cc-8e64-4dd7c74b2dde` serving `/assets/index-BJdcq09k.js`, D1 still one user, Worker name/routes/bindings and Better Auth configuration unchanged, old host still `302`, `main` still `0d25fc5`, branch not merged.
+
+Details: docs/P14_STAGING_ARCHITECTURE.md, docs/P14_STAGING_DEPLOYMENT.md, docs/P14_STAGING_SECURITY.md, docs/P14_UI_CLOUD_VALIDATION.md, docs/P14_FINAL_REPORT.md.
