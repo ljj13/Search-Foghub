@@ -8,7 +8,7 @@ WebDAV 为公网 HTTPS + 账号 + 应用密码，内置坚果云地址。默认 
 
 偏好版本 CAS，自动保存；重开/恢复焦点读取最新版本。冲突保留本地编辑并提示手动加载云端。网络故障保留编辑、允许重试。退出和会话失效清除私人显示/编辑。网盘故障恢复内置壁纸并可重试。目录只在打开网盘面板或手动刷新/完成上传/连接测试时读取。
 
-Cloudflare Free，达到平台限制不自动付费。域名 beyondfog.cc.cd，账号 fogpurification@gmail.com。WebDAV 配置用户登录后自行填写。3 张 Unsplash 摄影在 public/wallpapers；来源与许可在 ASSETS.md。
+Cloudflare Free，达到平台限制不自动付费。域名 foghub.org（站点 search.foghub.org，2026-11-22 从 beyondfog.cc.cd 迁入），账号 fogpurification@gmail.com。WebDAV 配置用户登录后自行填写。3 张 Unsplash 摄影在 public/wallpapers；来源与许可在 ASSETS.md。
 
 执行阶段：
 1. 基础项目与安全验证（搜索、路径、加密、图片签名）。

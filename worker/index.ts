@@ -95,6 +95,11 @@ export class BeyondFogService extends DurableObject<Env> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    // The site moved to search.foghub.org; old bookmarks keep working through a redirect.
+    // 302 rather than 301: a permanent redirect would be cached by browsers and make a rollback painful.
+    if (url.hostname === 'beyondfog.cc.cd' && url.origin !== env.APP_ORIGIN) {
+      return Response.redirect(new URL(url.pathname + url.search, env.APP_ORIGIN).toString(), 302);
+    }
     let response: Response;
     if (url.pathname.startsWith('/api/')) {
       try { response = await env.SERVICE.get(env.SERVICE.idFromName('beyondfog-private-service')).fetch(request); }

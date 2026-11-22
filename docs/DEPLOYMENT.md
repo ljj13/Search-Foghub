@@ -8,13 +8,14 @@ Cloudflare 账号必须使用 Workers Free，域名选 Free。项目不调用升
 
 ## 当前配置
 
-- 站点：https://beyondfog.cc.cd
+- 站点：https://search.foghub.org（2026-11-22 起；旧域名 https://beyondfog.cc.cd 仍绑定同一 Worker，但只做 302 跳转到新域名）
+- 域名：foghub.org 托管在同一 Cloudflare 账号（zone `24d327f1a74ad843887d5f303db2bf99`），`search` 子域为 Worker 自定义域
 - Worker：beyondfog；账号 ID：05201dce1f81fa08db008509ccc4a441
 - D1：beyondfog，UUID 在 wrangler.jsonc（已创建并迁移）
 - Durable Object：BeyondFogService，SQLite 类，稳定实例名 beyondfog-private-service
 - 初始邮箱：fogpurification@gmail.com
 - DNSHE 自定义服务器：guy.ns.cloudflare.com、uma.ns.cloudflare.com
-- 注册关闭；密码重置只发送到该已验证 Gmail。send_email 绑定额外限制发送人 noreply@beyondfog.cc.cd。
+- 注册关闭；密码重置只发送到该已验证 Gmail。send_email 绑定额外限制发送人 noreply@beyondfog.cc.cd（foghub.org 的 Email Routing 尚未启用，所以发件人暂时保留旧域名；重置链接本身已指向新域名）。
 - 首个功能部署：`ae7696be-7136-4225-9ad7-393a478477c7`，2026-10-04T17:37:26Z；HTTPS、私人接口保护和注册关闭已在线检查。完整验收状态见 [PROGRESS.md](PROGRESS.md)。
 - 当前部署：`05f718cd-88eb-4936-ba04-1ad9df253fc7`（commit `3acaa6a`），2026-11-10 13:42（新加坡时间）；首屏不再先画默认平铺再切换成文件夹——会话与快照并行读取（省一次 Durable Object 冷启动）、localStorage 保留最近一次被服务端确认的快照使重载立即画出真实布局（读取时校验 schema、版本更旧则忽略、退出或会话失效即清除）、首帧改显骨架屏且顶栏显示「正在连接」。包含 2026-11-09 审计修复与读取失败修复。冒烟通过：安全响应头、资源隔离、未登录私人接口 401 且 no-store、注册关闭、错误密码 401；线上实测顶栏识别账号、六个文件夹、无提示，控制台无报错。
 - 上一版本（回滚目标）：`5eb9056d-f305-4e90-8869-eb793ef520d6`（commit `d0cf36f`），2026-11-09 20:21:24（新加坡时间）；修复云端设置读取失败被误渲染成未登录（先取会话再取快照、首页连接提示与自动重试、未读到快照前不写云端），并包含同日审计修复（保存失败可重试、偏好读取降级、CSP 单一来源、WebDAV 错误保真）。冒烟通过：安全响应头、资源隔离、未登录私人接口 401 且 no-store、注册关闭、错误密码 401；线上首页实测识别账号并渲染私人捷径。

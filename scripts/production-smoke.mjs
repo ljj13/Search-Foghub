@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { fetch,ProxyAgent } from 'undici';
-const origin='https://beyondfog.cc.cd';
+const origin=process.env.ORIGIN??'https://search.foghub.org';
 const proxy=process.env.HTTPS_PROXY||process.env.HTTP_PROXY,dispatcher=proxy?new ProxyAgent(proxy):undefined;
 async function call(path,method='GET',data) {return fetch(origin+path,{method,dispatcher,signal:AbortSignal.timeout(30000),headers:data===undefined?{}:{Origin:origin,'Content-Type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});}
 const homepage=await call('/');assert.equal(homepage.status,200);
