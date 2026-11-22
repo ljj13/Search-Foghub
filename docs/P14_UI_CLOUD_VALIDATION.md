@@ -13,8 +13,8 @@ local proxy and authenticated with the staging Basic gate.
   the session is reused through `storageState` for the other viewports. The staging login
   limiter allows 8 attempts per 5 minutes per IP, so the script signs in once per run.
 - Screenshots: `.artifacts/p14-cloud/{guest,signed,settings,popup}-{desktop,tablet,mobile}.png`.
-- Script: `.artifacts/p14-cloud-validation.mjs` (kept out of the repo; the reusable HTTP checks
-  live in `scripts/staging-smoke.mjs`).
+- Script: `scripts/staging-ui-check.mjs` (repeatable; the HTTP-level checks live in
+  `scripts/staging-smoke.mjs`).
 
 ## Result: 62/62 checks passed
 
