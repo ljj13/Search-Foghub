@@ -6,8 +6,12 @@ async function call(path,method='GET',data) {return fetch(origin+path,{method,di
 const homepage=await call('/');assert.equal(homepage.status,200);
 assert.equal(homepage.headers.get('referrer-policy'),'no-referrer');assert.equal(homepage.headers.get('x-frame-options'),'DENY');assert(homepage.headers.get('content-security-policy')?.includes("frame-ancestors 'none'"));
 const html=await homepage.text();assert(html.includes('BeyondFog'));console.log('HTTPS 首页与文档安全响应头：通过');
+const expectedCsp="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: https:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'";
+assert.equal(homepage.headers.get('content-security-policy'),expectedCsp,'CSP 与预期策略不一致（可能被弱化）');
+assert(!/cloudflareinsights\.com\/beacon|data-cf-beacon/.test(html),'页面仍包含 Cloudflare RUM 信标，CSP 会拦截它');
+console.log('CSP 完整未被弱化、无 RUM 信标注入：通过');
 const asset=html.match(/src="([^"]+\.js)"/)?.[1];assert(asset);
-const bundle=await call(asset);assert.equal(bundle.status,200);assert(!(await bundle.text()).includes('fogpurification@gmail.com'));console.log('前端资源与私人账号信息隔离：通过');
+const bundle=await call(asset);assert.equal(bundle.status,200);assert(bundle.headers.get('content-type')?.includes('javascript'));assert(!(await bundle.text()).includes('fogpurification@gmail.com'));console.log('前端资源与私人账号信息隔离：通过');
 const session=await call('/api/auth/get-session');assert.equal(session.status,200);assert.equal(await session.json(),null);
 for(const path of ['/api/preferences','/api/webdav/connection','/api/webdav/files']) {const r=await call(path);assert.equal(r.status,401);assert(r.headers.get('cache-control')?.includes('no-store'));await r.body?.cancel();}
 console.log('未登录私人接口与禁止缓存：通过');

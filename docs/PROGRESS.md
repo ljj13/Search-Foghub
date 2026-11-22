@@ -214,3 +214,19 @@ Email. `EMAIL_FROM` stays `noreply@beyondfog.cc.cd` because `foghub.org` has Ema
 Verification. Deployed version `f358b11d-da50-48cc-8e64-4dd7c74b2dde` (commit `9f3ad67`). `node scripts/production-smoke.mjs` passes all four groups against `https://search.foghub.org`. `https://beyondfog.cc.cd/` and `https://beyondfog.cc.cd/?x=1` answer `302` with the path and query preserved, `https://search.foghub.org/` answers `200` with the current bundle, and the origin gate behaves as intended: a sign-in POST with `Origin: https://search.foghub.org` reaches the auth handler (`401` for a wrong password) while `Origin: https://beyondfog.cc.cd` is rejected with `403`. A live browser tab on the new domain renders the guest home with five default shortcuts and no console errors.
 
 Note. The first deploy of this change (`6706861b-c762-4ff8-89f7-4dd4f9ca47eb`) was built from the `feat/ui-modernize` working tree and briefly served the modernized front end. It was replaced by `f358b11d`, built from `main`, so production again matches the pre-migration content; the modernization stays on its branch.
+
+## 2026-11-22 — P13: RUM/CSP fix and an isolated look at the modernized front end
+
+Report: the owner asked for the Cloudflare RUM/CSP conflict to be fixed in production and for the modernized front end to be reviewed without shipping it.
+
+RUM/CSP. Cloudflare was injecting static.cloudflareinsights.com/beacon.min.js into the HTML of search.foghub.org only (the apex and dmin.proxy.foghub.org were never injected), and script-src 'self' blocked it. The fix is a single Configuration Rule on the oghub.org zone — http.host eq "search.foghub.org" with disable_rum — so the CSP stays exactly as it was and no Worker deploy was needed. Verified in the browser: no beacon request, no console violation, CSP header byte-identical, and scripts/production-smoke.mjs now asserts both the full CSP string and the absence of the beacon.
+
+Preview. wrangler preview (4.147.0) deploys the current Worker as a Preview but keeps the production D1, Durable Object and email bindings, and it has no binding overrides, so a cloud Preview would have written production data. The modernized branch was therefore reviewed on the local dev server with the local D1/DO and the seeded test account, and the cloud Preview is recorded as blocked rather than faked. Desktop 1440x900, tablet 768x1024 and mobile 390x844 all render with zero horizontal overflow and zero console errors; the folder menu becomes a bottom sheet on mobile; the settings panel, login dialog, reset form and all four tabs were exercised.
+
+Verification. 
+px tsc --noEmit clean, 
+px vitest run 78/78, 
+px playwright test 50/50, 
+pm run build passes (CSS 30.27 kB / gzip 7.53, JS 380.92 kB / gzip 117.27 versus main's 23.46 / 6.05 and 374.94 / 115.38). Production is untouched: version 358b11d, bundle index-BJdcq09k.js, old host still 302, D1 and DO bindings unchanged, no CI that could deploy on push.
+
+Details: docs/P13_RUM_CSP_FIX.md, docs/P13_UI_PREVIEW.md, docs/P13_FINAL_VALIDATION.md.
