@@ -15,7 +15,7 @@
   </tr>
 </table>
 
-> 截图来自 `feat/ui-modernize` 分支（尚未合并到 `main`）；线上当前仍是上一版界面。
+> 截图取自线上版本 https://search.foghub.org 的访客态。
 
 ## 特性
 

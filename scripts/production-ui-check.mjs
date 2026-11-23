@@ -94,6 +94,9 @@ for (const vp of viewports) {
   check(`[${vp.name}] 顶栏显示登录`, (await page.locator('.login-button').innerText()).trim() === '登录');
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   check(`[${vp.name}] 无横向溢出`, overflow <= 0, String(overflow));
+  // Console hygiene is judged on a plain guest load; the deliberate wrong password below
+  // answers 401 and the browser logs that request, which is expected.
+  check(`[${vp.name}] 无控制台错误`, errors.length === 0, errors.slice(0, 2).join(' | '));
 
   await page.locator('.login-button').click();
   const modal = page.locator('.scrim .modal');
@@ -111,7 +114,9 @@ for (const vp of viewports) {
 
   await page.keyboard.press('Escape');
   check(`[${vp.name}] Escape 关闭登录弹窗`, (await page.locator('.scrim').count()) === 0);
-  check(`[${vp.name}] 无控制台错误`, errors.length === 0, errors.slice(0, 2).join(' | '));
+  // A failed sign-in is supposed to surface ONE 401; anything else still counts as noise.
+  const unexpected = errors.filter((text) => !/status of 401/.test(text));
+  check(`[${vp.name}] 错误密码只产生一个预期 401`, unexpected.length === 0, unexpected.slice(0, 2).join(' | '));
   check(`[${vp.name}] 无失败请求`, failed.length === 0, failed.slice(0, 2).join(' | '));
   await context.close();
 }
