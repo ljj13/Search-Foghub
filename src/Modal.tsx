@@ -14,5 +14,5 @@ export function Modal({title,children,onClose,panel=false}:{title:string;childre
     document.addEventListener('keydown',handler);const old=document.body.style.overflow;document.body.style.overflow='hidden';
     return()=>{document.removeEventListener('keydown',handler);document.body.style.overflow=old;previous?.focus();};
   },[onClose]);
-  return <div className={`scrim ${panel?'panel-scrim':''}`} onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}><div ref={ref} role="dialog" aria-modal="true" aria-label={title} className={panel?'panel':'modal'}><header className="dialog-header"><div><span className="eyebrow">BEYONDFOG</span><h2>{title}</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label={`关闭${title}`}><X size={21}/></button></header>{children}</div></div>;
+  return <div className={`scrim ${panel?'panel-scrim':''}`} onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}><div ref={ref} role="dialog" aria-modal="true" aria-label={title} className={panel?'panel':'modal'}><header className="dialog-header"><div><span className="eyebrow">FOGHUB</span><h2>{title}</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label={`关闭${title}`}><X size={21}/></button></header>{children}</div></div>;
 }

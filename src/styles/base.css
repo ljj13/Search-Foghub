@@ -19,8 +19,9 @@ h2,h3,p{margin:0}
 h3{font-size:var(--text-lg);font-weight:550}
 svg{flex:none}
 .home-header{display:flex;align-items:center;justify-content:space-between;padding:30px 42px}
-.brand{display:flex;align-items:center;gap:11px;letter-spacing:.07em;font-size:16px;font-weight:520;text-shadow:0 1px 10px #10202f66}
-.brand:hover{text-decoration:none}
+.brand{display:flex;align-items:center;gap:11px;letter-spacing:.07em;font-size:16px;font-weight:520;text-shadow:0 1px 10px #10202f66;transition:opacity var(--dur) var(--ease-out)}
+.brand:hover{text-decoration:none;opacity:.78}
+.brand:focus-visible{outline:2px solid var(--fog-accent);outline-offset:6px;border-radius:10px}
 .header-actions{display:flex;align-items:center;gap:12px}
 .icon-button{padding:10px;min-width:38px;min-height:38px;border:none;background:transparent}
 .glass,.login-button{background:#14304338;border:1px solid #d3e5f526;backdrop-filter:blur(12px)}

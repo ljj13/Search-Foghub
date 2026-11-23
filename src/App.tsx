@@ -48,7 +48,7 @@ export default function App() {
     <img key={src} className="backdrop" src={src} alt="" draggable={false} decoding="async" fetchPriority="high" onError={()=>{if(!wallpaperError&&data.wallpaper.kind==='webdav')setWallpaperError(true);}}/>
     <div className="backdrop-shade" style={{'--dim':data.dim} as React.CSSProperties}/>
     <header className="home-header">
-      <a className="brand" href="/" aria-label="BeyondFog 首页"><Fog size={27} strokeWidth={1.5}/><span>BeyondFog</span></a>
+      <a className="brand" href="https://foghub.org/" aria-label="FogHub 首页"><Fog size={27} strokeWidth={1.5}/><span>FogHub</span></a>
       <div className="header-actions">
         <button className="login-button" aria-busy={!ready} onClick={()=>{if(!ready)return;user?setPanel(true):openAuth();}}><UserRound size={15}/><span>{ready?(user?'我的空间':'登录'):'正在连接'}</span></button>
         <button className="icon-button glass" aria-label="打开设置" title="设置" onClick={()=>setPanel(true)}><Settings2 size={19}/></button>
@@ -69,7 +69,7 @@ export default function App() {
       {model.conflict&&<button className="wallpaper-notice" onClick={()=>setPanel(true)}>设置同步冲突 · 本地编辑已保留，打开设置处理</button>}
     </main>
     <footer className="home-footer">
-      <span className="home-motto">BEYOND THE FOG, MORE TO DISCOVER.</span>
+      <span className="home-motto">FOGHUB — EXPLORE BEYOND THE ORDINARY.</span>
       <a className="photo-credit" href={selected?.source??wallpapers[0].source} target="_blank" rel="noreferrer">{data.wallpaper.kind==='webdav'&&!wallpaperError&&user?'你的私人壁纸':`摄影 / ${selected?.author??wallpapers[0].author}`}<span aria-hidden="true">↗</span></a>
     </footer>
     {panel&&<Settings model={model} onClose={closePanel} onAuth={()=>openAuth()} onChangePassword={()=>openAuth(true)} initialShortcut={shortcut} initialFolder={initialFolder}/>}

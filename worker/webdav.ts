@@ -38,7 +38,7 @@ function checkHost(endpoint: string, env: Env) {
   if (!allowedHosts(env).includes(new URL(endpoint).hostname)) throw new Problem(400,'此 WebDAV 域名尚未获准。坚果云可直接使用；其他网盘请先在部署配置中添加域名。');
 }
 function publicConnection(c: Connection | null, env: Env) {
-  return {configured: Boolean(c), version: c?.version ?? 0, endpoint: c?.endpoint ?? 'https://dav.jianguoyun.com/dav/', username: c?.username ?? '', directory: c?.directory ?? 'BeyondFog/wallpapers', allowedHosts: allowedHosts(env)};
+  return {configured: Boolean(c), version: c?.version ?? 0, endpoint: c?.endpoint ?? 'https://dav.jianguoyun.com/dav/', username: c?.username ?? '', directory: c?.directory ?? 'FogHub/wallpapers', allowedHosts: allowedHosts(env)};
 }
 async function dav(c: Connection, env: Env, url: string, method: string, headers: Record<string,string> = {}, body?: ReadableStream<Uint8Array> | string) {
   checkHost(c.endpoint, env);

@@ -12,7 +12,7 @@ export function createAuth(env: Env) {
         if (user.email.toLowerCase() !== env.OWNER_EMAIL.toLowerCase()) return;
         if (!env.EMAIL) throw new Error('EMAIL_NOT_CONFIGURED');
         const link = new URL('/', env.APP_ORIGIN); link.searchParams.set('token', token);
-        await env.EMAIL.send({from: {name: 'BeyondFog', email: env.EMAIL_FROM}, to: env.OWNER_EMAIL, subject: '重置 BeyondFog 密码', text: `请在 30 分钟内打开以下链接重置密码。链接只能使用一次。\n\n${link.href}\n\n如果你没有请求重置，请忽略此邮件。`});
+        await env.EMAIL.send({from: {name: 'FogHub', email: env.EMAIL_FROM}, to: env.OWNER_EMAIL, subject: '重置 FogHub 密码', text: `请在 30 分钟内打开以下链接重置密码。链接只能使用一次。\n\n${link.href}\n\n如果你没有请求重置，请忽略此邮件。`});
       },
     },
     session: {expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24, cookieCache: {enabled: false}},

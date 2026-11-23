@@ -43,9 +43,9 @@ export function Settings({model,onClose,onAuth,onChangePassword,initialShortcut,
       <div hidden={tab!=='shortcuts'}><ShortcutSettings model={model} initialShortcut={initialShortcut} initialFolder={initialFolder}/></div>
       {tab==='webdav'&&(user?<WebdavPanel selected={data.wallpaper.kind==='webdav'?data.wallpaper.file:undefined} onSelect={file=>edit(d=>({...d,wallpaper:{kind:'webdav',file}}))} onExpired={()=>void model.reload()}/>:<div className="empty"><Cloud size={32}/><h3>连接你的壁纸网盘</h3><p>登录后配置 WebDAV，选用自己的风景。</p><button type="button" className="primary" onClick={onAuth}>登录账号</button></div>)}
       {tab==='account'&&<>
-        <div className="section-heading"><h3>{user?'你的私人空间':'欢迎来到 BeyondFog'}</h3></div>
+        <div className="section-heading"><h3>{user?'你的私人空间':'欢迎来到 FogHub'}</h3></div>
         {user?<>
-          <div className="account-card"><UserRound size={24}/><div><strong>BeyondFog</strong><span>{user.email}</span></div></div>
+          <div className="account-card"><UserRound size={24}/><div><strong>FogHub</strong><span>{user.email}</span></div></div>
           <p className="description">捷径、搜索偏好、壁纸选择和网盘连接会在设备间同步。</p>
           <button type="button" className="wide" disabled={model.loggingOut} onClick={onChangePassword}>修改密码</button>
           <button type="button" className="wide danger logout" disabled={model.loggingOut} onClick={()=>void model.logout().then(onClose).catch(()=>setLogoutFailed(true))}><LogOut size={16}/>{model.loggingOut?'正在退出…':'退出登录'}</button>
@@ -56,7 +56,7 @@ export function Settings({model,onClose,onAuth,onChangePassword,initialShortcut,
           <button type="button" className="primary wide" onClick={onAuth}>登录账号</button>
           <p className="hint">仅供个人使用，公开注册已关闭。</p>
         </>}
-        <div className="about"><span className="eyebrow">A LITTLE SPACE FOR DISCOVERY</span><p>BeyondFog <small>1.0</small></p><span>穿过薄雾，发现更多。</span></div>
+        <div className="about"><span className="eyebrow">A LITTLE SPACE FOR DISCOVERY</span><p>FogHub <small>1.0</small></p><span>穿过薄雾，发现更多。</span></div>
       </>}
     </div>
     <footer className="panel-footer">{user?'你的更改会自动保存':'访客模式 · 登录后开启跨设备同步'}</footer>
