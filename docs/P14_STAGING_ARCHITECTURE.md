@@ -1,5 +1,7 @@
 # P14 Staging Architecture
 
+> **Historical.** The staging environment was decommissioned in P15: `staging.search.foghub.org` no longer resolves, and its Wrangler config and scripts were removed from the repository. This document is kept as the record of what was validated.
+
 Staging is a second, fully separate Cloudflare Worker that serves the modernized front end at
 `https://staging.search.foghub.org`. It shares no data plane with production: its own Worker
 script, its own D1 database, its own Durable Object namespace, its own Better Auth secrets and

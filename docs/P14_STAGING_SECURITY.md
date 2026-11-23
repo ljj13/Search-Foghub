@@ -1,5 +1,7 @@
 # P14 Staging Security
 
+> **Historical.** The staging environment was decommissioned in P15: `staging.search.foghub.org` no longer resolves, and its Wrangler config and scripts were removed from the repository. This document is kept as the record of what was validated.
+
 Staging is a real, internet-reachable Cloudflare deployment. It is protected by an access gate
 and by full resource isolation from production. This document records the model and the evidence.
 

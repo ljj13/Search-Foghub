@@ -6,31 +6,6 @@ import { webdavApi } from './webdav';
 import { applySecurityHeaders } from './headers';
 import { json, Problem, readJson, type Env } from './types';
 
-/**
- * Staging is not a public site. One shared credential gates every request — HTML, assets and
- * `/api/*` alike — so the preview cannot be read through an open URL or a deep link.
- * Production never sets `STAGING_ACCESS`, so this branch is dead there.
- */
-function stagingGate(request: Request, access: string): Response | null {
-  let credentials = '';
-  try {
-    credentials = atob((request.headers.get('authorization') ?? '').replace(/^Basic\s+/i, ''));
-  } catch { /* Malformed header: treated as a failed attempt. */ }
-  if (credentials.length === access.length) {
-    let mismatch = 0;
-    for (let i = 0; i < access.length; i++) mismatch |= credentials.charCodeAt(i) ^ access.charCodeAt(i);
-    if (mismatch === 0) return null;
-  }
-  return new Response('需要访问口令（BeyondFog staging）', {
-    status: 401,
-    headers: {
-      'WWW-Authenticate': 'Basic realm="BeyondFog staging", charset="UTF-8"',
-      'Cache-Control': 'no-store',
-      'X-Robots-Tag': 'noindex, nofollow',
-    },
-  });
-}
-
 export class BeyondFogService extends DurableObject<Env> {
   private auth: ReturnType<typeof createAuth>;
   constructor(ctx: DurableObjectState, env: Env) {
@@ -120,10 +95,6 @@ export class BeyondFogService extends DurableObject<Env> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    if (env.STAGING_ACCESS) {
-      const denied = stagingGate(request, env.STAGING_ACCESS);
-      if (denied) return denied;
-    }
     // The site moved to search.foghub.org; old bookmarks keep working through a redirect.
     // 302 rather than 301: a permanent redirect would be cached by browsers and make a rollback painful.
     if (url.hostname === 'beyondfog.cc.cd' && url.origin !== env.APP_ORIGIN) {
@@ -136,7 +107,6 @@ export default {
     } else response = await env.ASSETS.fetch(request);
     const result = new Response(response.body, response);
     applySecurityHeaders(result.headers, url.protocol === 'https:');
-    if (env.ENVIRONMENT === 'staging') result.headers.set('X-Robots-Tag', 'noindex, nofollow');
     if (url.pathname.startsWith('/api/')) result.headers.set('Cache-Control','no-store, private');
     return result;
   },

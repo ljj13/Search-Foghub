@@ -1,5 +1,7 @@
 # P14 Final Report
 
+> **Historical.** The staging environment was decommissioned in P15: `staging.search.foghub.org` no longer resolves, and its Wrangler config and scripts were removed from the repository. This document is kept as the record of what was validated.
+
 P14 built an isolated Cloudflare staging environment for the modernized front end, deployed it,
 validated it in a real browser against the real deployment, and left production untouched.
 

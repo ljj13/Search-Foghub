@@ -1,5 +1,7 @@
 # P14 Staging Deployment
 
+> **Historical.** The staging environment was decommissioned in P15: `staging.search.foghub.org` no longer resolves, and its Wrangler config and scripts were removed from the repository. This document is kept as the record of what was validated.
+
 Staging is deployed with its own Wrangler config and its own resources. Nothing in this
 document touches production.
 

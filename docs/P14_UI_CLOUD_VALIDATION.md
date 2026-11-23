@@ -1,5 +1,7 @@
 # P14 UI Cloud Validation
 
+> **Historical.** The staging environment was decommissioned in P15: `staging.search.foghub.org` no longer resolves, and its Wrangler config and scripts were removed from the repository. This document is kept as the record of what was validated.
+
 The modernized front end was validated against the real Cloudflare staging deployment
 (`https://staging.search.foghub.org`), not against a local dev server. Chromium ran through the
 local proxy and authenticated with the staging Basic gate.

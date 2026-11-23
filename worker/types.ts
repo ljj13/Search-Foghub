@@ -9,13 +9,6 @@ export interface Env {
   WEBDAV_ALLOWED_HOSTS?: string;
   EMAIL_FROM: string;
   EMAIL?: SendEmail;
-  /**
-   * Staging only: `user:password` for the HTTP Basic gate. Absent in production,
-   * which keeps the public site untouched even if the config is copied by mistake.
-   */
-  STAGING_ACCESS?: string;
-  /** `staging` adds `X-Robots-Tag: noindex`; production leaves it unset. */
-  ENVIRONMENT?: string;
 }
 export class Problem extends Error {
   constructor(public status: number, message: string) { super(message); }
