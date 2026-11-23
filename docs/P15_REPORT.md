@@ -17,7 +17,7 @@
 | 旧域名 302 正常 | PASS | `https://beyondfog.cc.cd/x/y?z=1` → 302 `https://search.foghub.org/x/y?z=1` |
 | RUM/CSP 冲突不复发 | PASS | HTML 无 beacon；CSP 与上线前逐字一致；`scripts/production-smoke.mjs` 已加回归断言 |
 | 桌面与移动端验收 | PASS | 1440×900 / 768×1024 / 390×844 三视口 47/47 只读检查通过，无横向溢出、无失败请求 |
-| GitHub main 与实际部署对应 | PASS | `main` = `8871b60`（已推送），部署即由此提交构建 |
+| GitHub main 与实际部署对应 | PASS | 部署构建 = `8871b60`；`main` 头为 `b10bf6d`（仅文档与检查脚本）；在 HEAD 重新构建的 bundle 与线上逐字相同 |
 | 未创建备份或快照 | PASS | 未导出 D1、未复制密钥、未建快照、未写生产测试数据 |
 
 ## 2. Staging 域名删除结果
@@ -41,7 +41,7 @@
 - 合并前：`main` = `fe1e5c6`（README 更新），`feat/ui-modernize` = `11e3785`（领先 5 个提交）。
 - `git merge --ff-only feat/ui-modernize` → `11e3785`（快进，无冲突、无 squash）。
 - 清理提交 `8871b60 chore: retire the staging access gate before launch`（Worker 去掉 Basic 闸门、删除 staging 配置与脚本、新增生产只读 UI 检查）。
-- `git push origin main`：`fe1e5c6..8871b60`，GitHub `main` 与生产构建一致。
+- `git push origin main`：`fe1e5c6..8871b60`，随后本报告的提交 `b10bf6d` 再推一次（`8871b60..b10bf6d`）。`b10bf6d` 只含文档与 `scripts/production-ui-check.mjs`，不在 Worker/前端构建产物里。
 - 工作区在构建与部署时干净（部署即由 `8871b60` 的代码构建）。
 
 ## 5. Cloudflare 生产部署版本
@@ -50,7 +50,7 @@
 | --- | --- |
 | Worker | `beyondfog`（沿用现有 Worker，未改名、未新建） |
 | 版本 | `6781765d-2c11-4d36-ac25-4dd594135077`（100%，2026-11-23T04:11:08Z / 12:11 SGT） |
-| Commit | `8871b60` |
+| Commit | `8871b60`（部署构建；`main` 头 `b10bf6d` 仅文档与检查脚本，HEAD 重建 bundle 相同） |
 | JS bundle | `/assets/index-CLYzVnaq.js`（380.92 kB / gzip 117.27 kB） |
 | CSS bundle | `/assets/index-DWmpK7lc.css`（30.27 kB / gzip 7.53 kB） |
 | 上传体积 | 1668.74 KiB / gzip 366.44 KiB |
